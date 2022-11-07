@@ -80,20 +80,15 @@ func getJson(url string, target interface{}) error {
 
 func main() {
 	router := gin.Default()
-	router.POST("/get-weather", getWeatherByPosition)
+	router.GET("/get-weather", getWeatherByPosition)
 
 	router.Run("0.0.0.0:3000")
 }
 
 func getWeatherByPosition(c *gin.Context) {
-	var cp position
-
-	if err := c.BindJSON(&cp); err != nil {
-		c.IndentedJSON(http.StatusOK, gin.H{"message": err})
-		return
-	}
-
-	url := "https://api.openweathermap.org/data/2.5/weather?lat=" + strconv.FormatFloat(cp.Lat, 'f', 6, 64) + "&lon=" + strconv.FormatFloat(cp.Lon, 'f', 6, 64) +"&appid=68f2c51c10fb42b906d3364af7115828"
+	lat := c.Query("lat")
+	lon := c.Query("lon")
+	url := "https://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + lon +"&appid=68f2c51c10fb42b906d3364af7115828"
 
 	info := new(MainInfo)
 	getJson(url, info)
